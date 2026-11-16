@@ -1,5 +1,5 @@
 -- native/NativeKernel/ZMod144.lean
--- Core-only modular arithmetic and reduction maps for Z/144Z and Z/12Z
+-- Core-only modular arithmetic, reduction homomorphisms, and ring-law lemmas for Z/144Z and Z/12Z
 
 namespace NativeKernel
 
@@ -30,9 +30,23 @@ theorem add144_comm (a b : ZMod144) : add144 a b = add144 b a := by
   rw [Nat.add_comm]
 
 theorem reduce_hom_add (a b : ZMod144) :
-    (reduce144To12 (add144 a b)).val =
-      ((reduce144To12 a).val + (reduce144To12 b).val) % 12 := by
-  simp only [reduce144To12, add144]
-  rw [Nat.mod_mod_of_dvd _ (by decide : 12 ∣ 144), Nat.add_mod]
+    (reduce144To12 (add144 a b)).val = ((reduce144To12 a).val + (reduce144To12 b).val) % 12 := by
+  dsimp [reduce144To12, add144]
+  have h12 : 12 ∣ 144 := by decide
+  rw [Nat.mod_mod_of_dvd _ h12]
+  exact Nat.add_mod a.val b.val 12
+
+-- Multiplicative reduction lemma for duodenary closure
+theorem reduce_hom_mul (a b : ZMod144) :
+    (reduce144To12 (mul144 a b)).val = ((reduce144To12 a).val * (reduce144To12 b).val) % 12 := by
+  dsimp [reduce144To12, mul144]
+  have h12 : 12 ∣ 144 := by decide
+  rw [Nat.mod_mod_of_dvd _ h12]
+  exact Nat.mul_mod a.val b.val 12
+
+theorem mul144_comm (a b : ZMod144) : mul144 a b = mul144 b a := by
+  ext
+  dsimp [mul144]
+  rw [Nat.mul_comm]
 
 end NativeKernel
