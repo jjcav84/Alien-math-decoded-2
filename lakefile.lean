@@ -4,9 +4,8 @@ open Lake DSL
 package independent_duodenary where
   version := v!"0.1.0"
 
-require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git" @
-  "4bbdccd9c5f862bf90ff12f0a9e2c8be032b9a84"
+-- No external requirements. Mathlib was removed; the residue foundation is native (see IndependentDuodenary/NativeResidue.lean).
+-- NOTE: the modules in IndependentDuodenary/ that still `import Mathlib` (10 direct, plus transitive dependents) are NOT yet ported.
 
 @[default_target]
 lean_lib IndependentDuodenary
