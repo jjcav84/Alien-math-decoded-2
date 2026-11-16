@@ -58,4 +58,38 @@ theorem mul12_add (a b c : ZMod12) : mul12 a (add12 b c) = add12 (mul12 a b) (mu
   dsimp [mul12, add12]
   rw [mul_mod_mod12, Nat.left_distrib, Nat.add_mod]
 
+theorem add12_mul (a b c : ZMod12) : mul12 (add12 a b) c = add12 (mul12 a c) (mul12 b c) := by
+  ext
+  dsimp [mul12, add12]
+  rw [Nat.mod_mul_mod, Nat.add_mul, Nat.add_mod (a.val * c.val) (b.val * c.val) 12]
+
+theorem mul12_comm (a b : ZMod12) : mul12 a b = mul12 b a := by
+  ext
+  dsimp [mul12]
+  rw [Nat.mul_comm]
+
+theorem mul12_assoc (a b c : ZMod12) : mul12 (mul12 a b) c = mul12 a (mul12 b c) := by
+  ext
+  dsimp [mul12]
+  rw [Nat.mod_mul_mod, mul_mod_mod12, Nat.mul_assoc]
+
+theorem one_mul12 (a : ZMod12) : mul12 ⟨1, by decide⟩ a = a := by
+  ext
+  dsimp [mul12]
+  have ha : a.val < 12 := a.isLt
+  omega
+
+theorem mul12_zero (a : ZMod12) : mul12 a ⟨0, by decide⟩ = ⟨0, by decide⟩ := by
+  ext
+  dsimp [mul12]
+
+def neg12 (a : ZMod12) : ZMod12 :=
+  ⟨(12 - a.val) % 12, Nat.mod_lt _ (by decide)⟩
+
+theorem add12_neg (a : ZMod12) : add12 a (neg12 a) = ⟨0, by decide⟩ := by
+  ext
+  dsimp [add12, neg12]
+  have ha : a.val < 12 := a.isLt
+  omega
+
 end NativeKernel
