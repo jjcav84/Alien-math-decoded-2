@@ -1,10 +1,12 @@
+import Batteries
+
 /-! Mathlib-free ZMod: abbrev to Fin, Nat.card, and compatibility shims. -/
 
-abbrev ZMod (n : ℕ) := Fin n
+abbrev ZMod (n : Nat) := Fin n
 
 namespace ZMod
 
-@[simp] theorem card (n : ℕ) : Fintype.card (ZMod n) = n := Fintype.card_fin n
+@[simp] theorem card (n : Nat) : Fintype.card (ZMod n) = n := Fintype.card_fin n
 
 end ZMod
 
@@ -13,7 +15,7 @@ instance instFintypeSubsingleton {α : Type*} : Subsingleton (Fintype α) :=
   ⟨fun ⟨s1, h1⟩ ⟨s2, h2⟩ => by
     congr 1; ext x; exact ⟨fun _ => h2 x, fun _ => h1 x⟩⟩
 
-noncomputable def Nat.card (α : Type*) : ℕ :=
+noncomputable def Nat.card (α : Type*) : Nat :=
   if h : Nonempty (Fintype α) then
     haveI : Fintype α := h.some
     Fintype.card α
@@ -36,7 +38,7 @@ theorem Nat.card_congr {α β : Type*} (e : α ≃ β) : Nat.card α = Nat.card 
       intro ⟨hb⟩; exact hα ⟨Fintype.ofEquiv β e.symm⟩
     simp [Nat.card, dif_neg hα, dif_neg hβ]
 
-theorem Nat.card_fin (n : ℕ) : Nat.card (Fin n) = n := by
+theorem Nat.card_fin (n : Nat) : Nat.card (Fin n) = n := by
   simp [Nat.card_eq_fintype_card]
 
 @[simp]

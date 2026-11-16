@@ -1,3 +1,5 @@
+import Batteries
+
 /-! Mathlib-free Turing machine types: Dir, Tape, TM0 structures.
    Also provides finProdFinEquiv and finCongr used by PostMicrocode. -/
 
@@ -12,24 +14,15 @@ structure Tape (Γ : Type*) where
   head  : Γ
   right : List Γ
 
-namespace Tape
+def Tape.write {Γ : Type*} (a : Γ) (t : Turing.Tape Γ) : Turing.Tape Γ :=
+  { t with head := a }
 
-variable {Γ : Type*}
-
-def write (a : Γ) (t : Tape Γ) : Tape Γ := { t with head := a }
-
-def move [Inhabited Γ] (d : Dir) (t : Tape Γ) : Tape Γ :=
+def Tape.move {Γ : Type*} [Inhabited Γ] (d : Dir) (t : Turing.Tape Γ) : Turing.Tape Γ :=
   match d with
-  | .left  => ⟨t.left.tail,
-               t.left.headD default,
-               t.head :: t.right⟩
-  | .right => ⟨t.head :: t.left,
-               t.right.headD default,
-               t.right.tail⟩
+  | .left  => ⟨t.left.tail,  t.left.headD default,  t.head :: t.right⟩
+  | .right => ⟨t.head :: t.left, t.right.headD default, t.right.tail⟩
 
-@[simp] theorem write_self (t : Tape Γ) : t.write t.head = t := rfl
-
-end Tape
+@[simp] theorem Tape.write_self {Γ : Type*} (t : Turing.Tape Γ) : t.write t.head = t := rfl
 
 namespace TM0
 
@@ -59,24 +52,23 @@ end TM0
 end Turing
 
 -- Fin product equiv: Fin m × Fin n ≃ Fin (m * n)
-def finProdFinEquiv {m n : ℕ} : Fin m × Fin n ≃ Fin (m * n) where
+def finProdFinEquiv {m n : Nat} : Fin m × Fin n ≃ Fin (m * n) where
   toFun := fun ⟨i, j⟩ => ⟨i.val * n + j.val, by
     have hi := i.isLt; have hj := j.isLt; nlinarith⟩
-  invFun := fun k =>
+  invFun := fun k => by
     rcases Nat.eq_zero_or_pos n with rfl | hn
-    · exact absurd k.isLt (by simp)
-    · exact ⟨⟨k.val / n, Nat.div_lt_iff_lt_mul hn |>.mpr k.isLt⟩,
+    · exact absurd k.isLt (by simp [Nat.mul_zero])
+    · exact ⟨⟨k.val / n, (Nat.div_lt_iff_lt_mul hn).mpr k.isLt⟩,
              ⟨k.val % n, Nat.mod_lt _ hn⟩⟩
   left_inv := fun ⟨⟨i, hi⟩, ⟨j, hj⟩⟩ => by
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · exact absurd hj (Nat.not_lt_zero _)
     · simp only [Fin.mk.injEq]
-      exact ⟨Nat.mul_add_div hn, Nat.mul_add_mod i j⟩
+      exact ⟨by omega, by omega⟩
   right_inv := fun ⟨k, hk⟩ => by
     rcases Nat.eq_zero_or_pos n with rfl | hn
-    · exact absurd hk (by simp)
-    · simp only [Fin.mk.injEq]
-      exact Nat.div_add_mod k n
+    · exact absurd hk (by simp [Nat.mul_zero])
+    · simp only [Fin.mk.injEq]; omega
 
 -- finCongr: Fin m ≃ Fin n given m = n
-def finCongr {m n : ℕ} (h : m = n) : Fin m ≃ Fin n := by subst h; exact Equiv.refl _
+def finCongr {m n : Nat} (h : m = n) : Fin m ≃ Fin n := by subst h; exact Equiv.refl _

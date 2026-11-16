@@ -1,6 +1,7 @@
+import IndependentDuodenary.NativeZMod
+
 /-! Mathlib-free binary module typeclass: ZMod 2 scalar action.
    Replaces Module (ZMod 2) V from Mathlib for the Source* files. -/
-import IndependentDuodenary.NativeZMod
 
 class BinaryModule (V : Type*) extends AddCommMonoid V, SMul (ZMod 2) V where
   protected zero_smul : ∀ v : V, (0 : ZMod 2) • v = 0

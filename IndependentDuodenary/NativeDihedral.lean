@@ -1,30 +1,31 @@
-/-! Mathlib-free DihedralGroup: inductive type, Group instance, Fintype, card. -/
 import IndependentDuodenary.NativeZMod
 
-inductive DihedralGroup (n : ℕ) : Type
+/-! Mathlib-free DihedralGroup: inductive type, Group instance, Fintype, card. -/
+
+inductive DihedralGroup (n : Nat) : Type
   | r  : ZMod n → DihedralGroup n
   | sr : ZMod n → DihedralGroup n
   deriving DecidableEq, Repr
 
 namespace DihedralGroup
 
-private def mul' {n : ℕ} : DihedralGroup n → DihedralGroup n → DihedralGroup n
+private def mul' {n : Nat} : DihedralGroup n → DihedralGroup n → DihedralGroup n
   | .r i,  .r j  => .r (i + j)
   | .r i,  .sr j => .sr (j - i)
   | .sr i, .r j  => .sr (i + j)
   | .sr i, .sr j => .r (j - i)
 
-private def inv' {n : ℕ} : DihedralGroup n → DihedralGroup n
+private def inv' {n : Nat} : DihedralGroup n → DihedralGroup n
   | .r i  => .r (-i)
   | .sr i => .sr i
 
-instance (n : ℕ) : Mul (DihedralGroup n) := ⟨mul'⟩
-instance (n : ℕ) : One (DihedralGroup n) := ⟨.r 0⟩
-instance (n : ℕ) : Inv (DihedralGroup n) := ⟨inv'⟩
+instance (n : Nat) : Mul (DihedralGroup n) := ⟨mul'⟩
+instance (n : Nat) : One (DihedralGroup n) := ⟨.r 0⟩
+instance (n : Nat) : Inv (DihedralGroup n) := ⟨inv'⟩
 
-@[simp] theorem one_def {n : ℕ} : (1 : DihedralGroup n) = DihedralGroup.r 0 := rfl
+@[simp] theorem one_def {n : Nat} : (1 : DihedralGroup n) = DihedralGroup.r 0 := rfl
 
-instance (n : ℕ) : Group (DihedralGroup n) where
+instance (n : Nat) : Group (DihedralGroup n) where
   mul_assoc a b c := by
     cases a <;> cases b <;> cases c <;>
       simp only [HMul.hMul, Mul.mul, mul'] <;>
@@ -39,7 +40,7 @@ instance (n : ℕ) : Group (DihedralGroup n) where
             neg_add_cancel, sub_self]
 
 -- Equiv to Bool × Fin n for Fintype/card.
-def toEquiv (n : ℕ) : DihedralGroup n ≃ Bool × Fin n where
+def toEquiv (n : Nat) : DihedralGroup n ≃ Bool × Fin n where
   toFun := fun g => match g with
     | .r  k => (false, k)
     | .sr k => (true,  k)
@@ -47,10 +48,10 @@ def toEquiv (n : ℕ) : DihedralGroup n ≃ Bool × Fin n where
   left_inv := by intro g; cases g <;> simp
   right_inv := by intro ⟨b, k⟩; cases b <;> simp
 
-instance (n : ℕ) : Fintype (DihedralGroup n) :=
+instance (n : Nat) : Fintype (DihedralGroup n) :=
   Fintype.ofEquiv _ (toEquiv n).symm
 
-theorem card (n : ℕ) : Fintype.card (DihedralGroup n) = 2 * n := by
+theorem card (n : Nat) : Fintype.card (DihedralGroup n) = 2 * n := by
   rw [Fintype.card_congr (toEquiv n)]
   simp [Fintype.card_prod, Fintype.card_bool, Fintype.card_fin]
 
