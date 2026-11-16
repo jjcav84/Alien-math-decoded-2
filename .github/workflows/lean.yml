@@ -19,7 +19,7 @@ jobs:
           build: true
           test: false
           lint: false
-          use-mathlib-cache: true
+          use-mathlib-cache: false
       - name: Check theorem inventory and axioms
         run: python3 scripts/audit.py
       - name: Check incremental extensions and baseline dependencies
