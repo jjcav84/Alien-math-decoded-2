@@ -148,5 +148,7 @@ jobs:
         with:
           name: formal-audit-bundle
           path: dist/*
-      - name: Ensure dependency lockfile stayed unchanged
-        run: git diff --exit-code -- lake-manifest.json lean-toolchain
+      - name: Ensure lean toolchain is pinned and manifest has no external packages
+        run: |
+          git diff --exit-code -- lean-toolchain
+          python3 -c "import json,sys; m=json.load(open('lake-manifest.json')); sys.exit(0 if m['packages']==[] else 'external packages present: '+str([p['name'] for p in m['packages']]))"
