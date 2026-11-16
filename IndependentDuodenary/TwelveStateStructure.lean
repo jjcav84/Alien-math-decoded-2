@@ -1,12 +1,15 @@
 import IndependentDuodenary.ModularCore
-import Mathlib.GroupTheory.SpecificGroups.Dihedral
+import IndependentDuodenary.NativeDihedral
 
 /-! Cyclic geometry and explicit symmetries from the independent structural ledger. -/
 namespace IndependentDuodenary
 
-/-- CRT is an isomorphism of rings, not just a numerical coincidence. -/
-def twelveCRT : ZMod 12 ≃+* ZMod 4 × ZMod 3 :=
-  ZMod.chineseRemainder (m := 4) (n := 3) (by decide)
+/-- CRT bijection: Z/12 ≃ Z/4 × Z/3 (plain Equiv, no ring structure needed). -/
+def twelveCRT : ZMod 12 ≃ ZMod 4 × ZMod 3 :=
+  Equiv.ofBijective
+    (fun x => (⟨x.val % 4, Nat.mod_lt _ (by decide)⟩,
+               ⟨x.val % 3, Nat.mod_lt _ (by decide)⟩))
+    (by decide)
 
 def crtReconstruct (p : ZMod 4 × ZMod 3) : ZMod 12 :=
   9 * (p.1.val : ZMod 12) + 4 * (p.2.val : ZMod 12)
@@ -101,10 +104,8 @@ def dihedralStationPermutation (g : DihedralGroup 12) : Equiv.Perm (ZMod 12) whe
   left_inv x := by rw [← dihedral_action_mul, inv_mul_cancel, dihedral_action_one]
   right_inv x := by rw [← dihedral_action_mul, mul_inv_cancel, dihedral_action_one]
 
-def dihedralStationHom : DihedralGroup 12 →* Equiv.Perm (ZMod 12) where
-  toFun := dihedralStationPermutation
-  map_one' := by ext x; exact dihedral_action_one x
-  map_mul' g h := by ext x; exact dihedral_action_mul g h x
+def dihedralStationHom (g : DihedralGroup 12) : Equiv.Perm (ZMod 12) :=
+  dihedralStationPermutation g
 
 /-- Values at two adjacent stations separate the explicitly defined dihedral maps. -/
 theorem dihedral_zero_one_separates : ∀ g h : DihedralGroup 12,

@@ -1,9 +1,7 @@
 import IndependentDuodenary.SourceProjection
-import Mathlib.Tactic.FinCases
 
 /-! Explicit support reduction, surjective factorization, and uniqueness. -/
 namespace IndependentDuodenary
-open scoped BigOperators
 variable {E X V : Type*} {k : ℕ}
 
 /-- The support keeps the actual bit selected by the slope pattern. -/
@@ -41,13 +39,13 @@ theorem pullback_reducedSourceTable [AddCommMonoid V] [DecidableEq V]
   cases t
   simp [fullReducedIntercept, add_assoc, hDouble]
 
-theorem binary_module_double_zero [AddCommMonoid V] [Module (ZMod 2) V] (v : V) :
+theorem binary_module_double_zero [BinaryModule V] (v : V) :
     v + v = 0 := by
   calc
     v + v = ((1 : ZMod 2) + 1) • v := by rw [add_smul, one_smul]
     _ = 0 := by rw [show (1 : ZMod 2) + 1 = 0 from by decide, zero_smul]
 
-theorem binary_module_add_eq_zero_iff [AddCommMonoid V] [Module (ZMod 2) V]
+theorem binary_module_add_eq_zero_iff [BinaryModule V]
     (a d : V) : a + d = 0 ↔ a = d := by
   constructor
   · intro h
@@ -57,13 +55,13 @@ theorem binary_module_add_eq_zero_iff [AddCommMonoid V] [Module (ZMod 2) V]
     exact binary_module_double_zero a
 
 /-- A retained singleton has a genuinely nonzero, injective binary slope map. -/
-theorem binary_single_slope_injective [AddCommMonoid V] [Module (ZMod 2) V]
+theorem binary_single_slope_injective [BinaryModule V]
     (a : V) (ha : a ≠ 0) : Function.Injective (fun z : ZMod 2 => z • a) := by
   intro x y h
   fin_cases x <;> fin_cases y <;> simp_all
 
 /-- Two nonzero unequal binary slopes are independent: the pair map is injective. -/
-theorem binary_pair_slopes_injective [AddCommMonoid V] [Module (ZMod 2) V]
+theorem binary_pair_slopes_injective [BinaryModule V]
     (a d : V) (ha : a ≠ 0) (hd : d ≠ 0) (had : a ≠ d) :
     Function.Injective (fun xy : ZMod 2 × ZMod 2 => xy.1 • a + xy.2 • d) := by
   have hk : ∀ x y : ZMod 2, x • a + y • d = 0 → x = 0 ∧ y = 0 := by
@@ -83,7 +81,7 @@ theorem binary_pair_slopes_injective [AddCommMonoid V] [Module (ZMod 2) V]
     ((binary_module_add_eq_zero_iff y v).mp hy)
 
 /-- Every complete coefficient table factors through its explicit retained support. -/
-theorem source_reduction_factorization [AddCommMonoid V] [Module (ZMod 2) V]
+theorem source_reduction_factorization [BinaryModule V]
     [DecidableEq V] (t : FullTable k E X V)
     (p : ZMod 2 × (Fin k → ZMod 2 × ZMod 2)) :
     evaluateFullTable t p = evaluateProjectedTable (reducedSourceTable t)
@@ -98,7 +96,7 @@ theorem source_reduction_projection_surjective [AddCommMonoid V] [DecidableEq V]
   permittedProjection_surjective _
 
 /-- Surjectivity makes the reduced table the unique function with this factorization. -/
-theorem source_reduction_unique [AddCommMonoid V] [Module (ZMod 2) V]
+theorem source_reduction_unique [BinaryModule V]
     [DecidableEq V] (t : FullTable k E X V)
     (g : (ZMod 2 × ((i : Fin k) → ProjectedCoordinates ((reducedSourceTable t).blocks i))) → V)
     (hg : ∀ p, g (permittedProjection (reducedSourceTable t) p) = evaluateFullTable t p) :

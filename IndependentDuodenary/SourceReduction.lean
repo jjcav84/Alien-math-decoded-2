@@ -1,5 +1,5 @@
 import IndependentDuodenary.SourceKeys
-import Mathlib.Algebra.BigOperators.Group.Finset
+import IndependentDuodenary.NativeModule
 
 /-!
 # Permitted block projections and exact-key compatibility
@@ -9,7 +9,6 @@ position remains explicit in Fin k, even when occurrence or variable IDs repeat.
 Parity bits use Bool; true acts as 1 and false as 0 on a binary vector group.
 -/
 namespace IndependentDuodenary
-open scoped BigOperators
 
 inductive SourcePosition where
   | first | second | third
@@ -118,15 +117,16 @@ structure FullTable (k : ℕ) (E X V : Type*) where
 variable {k : ℕ} {K W : Type*}
 
 def pullbackTable [AddCommMonoid V] (t : ProjectedTable k E X V) : FullTable k E X V :=
-  ⟨t.intercept + ∑ i, pullbackCorrection (t.blocks i), fun i => pullbackBlock (t.blocks i)⟩
+  ⟨t.intercept + Finset.univ.sum (fun i => pullbackCorrection (t.blocks i)),
+   fun i => pullbackBlock (t.blocks i)⟩
 
 def projectedReducedIntercept [AddCommMonoid V] [DecidableEq V]
     (t : ProjectedTable k E X V) : V :=
-  t.intercept + ∑ i, (reduceProjectedBlock (t.blocks i)).2
+  t.intercept + Finset.univ.sum (fun i => (reduceProjectedBlock (t.blocks i)).2)
 
 def fullReducedIntercept [AddCommMonoid V] [DecidableEq V]
     (t : FullTable k E X V) : V :=
-  t.intercept + ∑ i, (reduceFullBlock (t.blocks i)).2
+  t.intercept + Finset.univ.sum (fun i => (reduceFullBlock (t.blocks i)).2)
 
 theorem pullback_reduced_intercept [AddCommMonoid V] [DecidableEq V]
     (hDouble : ∀ v : V, v + v = 0) (t : ProjectedTable k E X V) :

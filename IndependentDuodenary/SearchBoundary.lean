@@ -1,5 +1,4 @@
 import IndependentDuodenary.MillenniumBridge
-import Mathlib.Data.List.FinRange
 
 /-! Exact decision for one orbit and a global lower bound for orbit covers. -/
 namespace IndependentDuodenary

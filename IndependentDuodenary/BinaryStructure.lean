@@ -1,6 +1,4 @@
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Finset.Powerset
+import IndependentDuodenary.NativeZMod
 
 /-! Binary vectors and their Hamming-weight layers, independent of external sources. -/
 namespace IndependentDuodenary
@@ -36,10 +34,10 @@ theorem maximum_weight_iff (v : BinaryVector) :
 /-- The support map bijects a weight layer with the k-element subsets of Fin 12. -/
 theorem weightLayer_card (k : ℕ) : (weightLayer k).card = Nat.choose 12 k := by
   rw [← show Fintype.card (Fin 12) = 12 from rfl, ← Finset.card_univ,
-    ← Finset.card_powersetCard]
+    ← Finset.card_powersetLen]
   apply Finset.card_bij (fun v _ => support v)
   · intro v hv
-    simp only [Finset.mem_powersetCard]
+    simp only [Finset.mem_powersetLen]
     exact ⟨Finset.subset_univ _, (Finset.mem_filter.mp hv).2⟩
   · intro v hv w hw heq
     funext i
@@ -61,7 +59,7 @@ theorem weightLayer_card (k : ℕ) : (weightLayer k).card = Nat.choose 12 k := b
     simp only [weightLayer, Finset.mem_filter, Finset.mem_univ, true_and]
     change (support v).card = k
     rw [hv]
-    exact (Finset.mem_powersetCard.mp hs).2
+    exact (Finset.mem_powersetLen.mp hs).2
 
 theorem single_bit_count : (weightLayer 1).card = 12 := by
   rw [weightLayer_card]; decide

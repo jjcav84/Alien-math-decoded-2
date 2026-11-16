@@ -1,5 +1,5 @@
 import IndependentDuodenary.AcceptanceNormalization
-import Mathlib.Logic.Equiv.Fin
+import IndependentDuodenary.NativeTuring
 
 /-! A concrete single-tape, four-symbol compiler component for obligation 1.14.
 It does not implement multi-tape layout or alphabet block encoding. -/

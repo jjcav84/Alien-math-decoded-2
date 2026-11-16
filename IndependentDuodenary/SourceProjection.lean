@@ -1,10 +1,8 @@
 import IndependentDuodenary.SourceReduction
-import Mathlib.Algebra.Module.Prod
-import Mathlib.Algebra.BigOperators.GroupWithZero.Action
+import IndependentDuodenary.NativeModule
 
 /-! Homogeneous answer coordinates and the semantics of permitted pullback. -/
 namespace IndependentDuodenary
-open scoped BigOperators
 
 variable {E X V : Type*} {k : ℕ}
 
@@ -67,7 +65,7 @@ theorem permittedProjection_surjective (t : ProjectedTable k E X V) :
   · funext i
     exact sourceBlockProjection_lift (t.blocks i) t₀ (z i)
 
-variable [AddCommMonoid V] [Module (ZMod 2) V]
+variable [BinaryModule V]
 
 def evaluateProjectedBlock (b : ProjectedBlock E X V) (z : ProjectedCoordinates b) : V :=
   match b with
@@ -98,11 +96,11 @@ theorem source_block_pullback_evaluation (b : ProjectedBlock E X V)
 
 def evaluateProjectedTable (t : ProjectedTable k E X V)
     (p : ZMod 2 × ((i : Fin k) → ProjectedCoordinates (t.blocks i))) : V :=
-  p.1 • t.intercept + ∑ i, evaluateProjectedBlock (t.blocks i) (p.2 i)
+  p.1 • t.intercept + Finset.univ.sum (fun i => evaluateProjectedBlock (t.blocks i) (p.2 i))
 
 def evaluateFullTable (t : FullTable k E X V)
     (p : ZMod 2 × (Fin k → ZMod 2 × ZMod 2)) : V :=
-  p.1 • t.intercept + ∑ i, evaluateFullBlock (t.blocks i) (p.2 i)
+  p.1 • t.intercept + Finset.univ.sum (fun i => evaluateFullBlock (t.blocks i) (p.2 i))
 
 /-- P' composed with the permitted homogeneous projection equals its coefficient pullback. -/
 theorem source_table_pullback_evaluation (t : ProjectedTable k E X V)
@@ -111,18 +109,18 @@ theorem source_table_pullback_evaluation (t : ProjectedTable k E X V)
       evaluateProjectedTable t (permittedProjection t p) := by
   simp only [evaluateFullTable, pullbackTable, evaluateProjectedTable, permittedProjection]
   rw [smul_add, Finset.smul_sum]
-  have hs : (∑ i, evaluateFullBlock (pullbackBlock (t.blocks i)) (p.2 i)) +
-      (∑ i, p.1 • pullbackCorrection (t.blocks i)) =
-      ∑ i, evaluateProjectedBlock (t.blocks i)
-        (sourceBlockProjection (t.blocks i) p.1 (p.2 i)) := by
+  have hs : (Finset.univ.sum (fun i => evaluateFullBlock (pullbackBlock (t.blocks i)) (p.2 i))) +
+      (Finset.univ.sum (fun i => p.1 • pullbackCorrection (t.blocks i))) =
+      Finset.univ.sum (fun i => evaluateProjectedBlock (t.blocks i)
+        (sourceBlockProjection (t.blocks i) p.1 (p.2 i))) := by
     rw [← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro i _
     exact source_block_pullback_evaluation (t.blocks i) p.1 (p.2 i)
   calc
     _ = p.1 • t.intercept +
-        ((∑ i, evaluateFullBlock (pullbackBlock (t.blocks i)) (p.2 i)) +
-          (∑ i, p.1 • pullbackCorrection (t.blocks i))) := by ac_rfl
+        ((Finset.univ.sum (fun i => evaluateFullBlock (pullbackBlock (t.blocks i)) (p.2 i))) +
+          (Finset.univ.sum (fun i => p.1 • pullbackCorrection (t.blocks i)))) := by ac_rfl
     _ = _ := by rw [hs]
 
 end IndependentDuodenary

@@ -1,5 +1,5 @@
 import IndependentDuodenary.PipelineSynthesis
-import Mathlib.Computability.TuringMachine
+import IndependentDuodenary.NativeTuring
 
 /-! Finite-protocol bounds and a separately stated machine-model conjecture.
 The conjecture below is a definition, not a proved consequence of these bounds. -/
