@@ -1,4 +1,4 @@
-import Mathlib.Data.ZMod.Basic
+import IndependentDuodenary.NativeZMod
 
 /-!
 # Modular Core
@@ -28,11 +28,11 @@ namespace IndependentDuodenary
 
 /-- Natural-number reduction preserves addition in the twelve-element ring. -/
 theorem station_add (m n : ℕ) : station (m + n) = station m + station n := by
-  exact Nat.cast_add m n
+  apply Fin.ext; simp [station, Fin.val_natCast, Fin.val_add, Nat.add_mod]
 
 /-- Natural-number reduction preserves addition in the 144-element ring. -/
 theorem superstation_add (m n : ℕ) : superstation (m + n) = superstation m + superstation n := by
-  exact Nat.cast_add m n
+  apply Fin.ext; simp [superstation, Fin.val_natCast, Fin.val_add, Nat.add_mod]
 
 theorem predecessor_add_one : (11 : ZMod 12) + 1 = 0 := by decide
 theorem predecessor_eq_neg_one : (11 : ZMod 12) = -1 := by decide
