@@ -220,7 +220,8 @@ theorem normalization_polynomial_overhead (c d length time : ℕ)
     time + 1 ≤ prizePolynomialBound (c + 1) d length := by
   have positive : 0 < (length + 1) ^ d := pow_pos (by omega) d
   unfold prizePolynomialBound at bound ⊢
-  nlinarith
+  calc time + 1 ≤ c * (length + 1) ^ d + (length + 1) ^ d := by omega
+    _ = (c + 1) * (length + 1) ^ d := by ring
 
 theorem normalization_finish_heads_unchanged {a s k : ℕ} (mode : AcceptanceConvention)
     (q : ReferenceConfiguration a s k) : (normalizationFinish mode q).body.head = q.head := by

@@ -154,7 +154,8 @@ theorem post_compiler_polynomial_bound (c d length time : ℕ)
     (bound : time ≤ prizePolynomialBound c d length) :
     2 * time ≤ prizePolynomialBound (2 * c) d length := by
   unfold prizePolynomialBound at bound ⊢
-  nlinarith
+  calc 2 * time ≤ 2 * (c * (length + 1) ^ d) := Nat.mul_le_mul_left 2 bound
+    _ = 2 * c * (length + 1) ^ d := by ring
 
 /-- The two ticks of a nonhalting source instruction are actual transitions. -/
 theorem post_micro_actual_step {s : ℕ} (M : WriteMoveMachine s)

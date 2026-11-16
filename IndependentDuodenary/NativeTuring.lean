@@ -1,4 +1,4 @@
-import Batteries
+import IndependentDuodenary.NativeZMod
 
 /-! Mathlib-free Turing machine types: Dir, Tape, TM0 structures.
    Also provides finProdFinEquiv and finCongr used by PostMicrocode. -/
@@ -54,7 +54,11 @@ end Turing
 -- Fin product equiv: Fin m × Fin n ≃ Fin (m * n)
 def finProdFinEquiv {m n : Nat} : Fin m × Fin n ≃ Fin (m * n) where
   toFun := fun ⟨i, j⟩ => ⟨i.val * n + j.val, by
-    have hi := i.isLt; have hj := j.isLt; nlinarith⟩
+    have hi := i.isLt; have hj := j.isLt
+    have h1 : i.val * n + j.val < i.val * n + n := Nat.add_lt_add_left hj _
+    have h2 : (i.val + 1) * n = i.val * n + n := Nat.succ_mul i.val n
+    have h3 : (i.val + 1) * n ≤ m * n := Nat.mul_le_mul_right n hi
+    omega⟩
   invFun := fun k => by
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · exact absurd k.isLt (by simp [Nat.mul_zero])

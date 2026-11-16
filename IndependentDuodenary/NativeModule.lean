@@ -32,10 +32,10 @@ instance instBinaryModuleFun {ι V : Type*} [BinaryModule V] : BinaryModule (ι 
 
 instance instBinaryModuleZMod2 : BinaryModule (ZMod 2) where
   smul := (· * ·)
-  zero_smul v := by fin_cases v <;> decide
-  one_smul v := by fin_cases v <;> decide
-  smul_add r a b := by fin_cases r <;> fin_cases a <;> fin_cases b <;> decide
-  add_smul r s v := by fin_cases r <;> fin_cases s <;> fin_cases v <;> decide
+  zero_smul v := by decide
+  one_smul v := by decide
+  smul_add r a b := by decide
+  add_smul r s v := by decide
 
 theorem Finset.smul_sum [BinaryModule V] {ι : Type*} (r : ZMod 2)
     (s : Finset ι) (f : ι → V) : r • s.sum f = s.sum (fun i => r • f i) := by
