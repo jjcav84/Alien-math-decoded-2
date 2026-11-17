@@ -1,3 +1,5 @@
+import IndependentDuodenary.Native.Foundations
+
 /-! Mathlib-free ZMod: Equiv structure, Fintype utilities, Nat.card shims. -/
 
 /-- Equiv structure (not in Lean 4 core Init). -/
@@ -16,7 +18,7 @@ instance : CoeFun (α ≃ β) (fun _ => α → β) := ⟨Equiv.toFun⟩
 @[simp]
 theorem coe_mk (f : α → β) (g l r) : (⟨f, g, l, r⟩ : α ≃ β) x = f x := rfl
 
-protected def refl (α : Sort*) : α ≃ α where
+protected def refl (α : Sort u) : α ≃ α where
   toFun    := id; invFun := id
   left_inv  := fun _ => rfl; right_inv := fun _ => rfl
 
@@ -26,8 +28,12 @@ protected def symm (e : α ≃ β) : β ≃ α where
 
 protected def trans (e₁ : α ≃ β) (e₂ : β ≃ γ) : α ≃ γ where
   toFun    := e₂ ∘ e₁; invFun := e₁.invFun ∘ e₂.invFun
-  left_inv  a := by simp [Function.comp, e₂.left_inv, e₁.left_inv]
-  right_inv c := by simp [Function.comp, e₁.right_inv, e₂.right_inv]
+  left_inv a := by
+    change e₁.invFun (e₂.invFun (e₂ (e₁ a))) = a
+    rw [e₂.left_inv, e₁.left_inv]
+  right_inv c := by
+    change e₂ (e₁ (e₁.invFun (e₂.invFun c))) = c
+    rw [e₁.right_inv, e₂.right_inv]
 
 theorem apply_symm_apply (e : α ≃ β) (b : β) : e (e.symm b) = b := e.right_inv b
 theorem symm_apply_apply (e : α ≃ β) (a : α) : e.symm (e a) = a := e.left_inv a
