@@ -1,0 +1,25 @@
+name: Omega duodenary closure and G-01 stable Rust verification
+on:
+  push:
+    branches:
+      - work/omega-duodenary-g01-bijection-20261116
+  pull_request:
+    paths:
+      - IndependentDuodenary/omega_duodenary_closure.rs
+      - .github/workflows/omega-duodenary-g01-rust.yml
+jobs:
+  rustc:
+    name: Stable Rust compile and exhaustive tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Rust 2021 compile with warnings denied
+        run: rustc --edition=2021 -D warnings --test IndependentDuodenary/omega_duodenary_closure.rs -o /tmp/omega_duodenary_2021_tests
+      - name: Rust 2021 run exhaustive tests
+        run: /tmp/omega_duodenary_2021_tests
+      - name: Rust 2024 compile with warnings denied
+        run: rustc --edition=2024 -D warnings --test IndependentDuodenary/omega_duodenary_closure.rs -o /tmp/omega_duodenary_2024_tests
+      - name: Rust 2024 run exhaustive tests
+        run: /tmp/omega_duodenary_2024_tests
